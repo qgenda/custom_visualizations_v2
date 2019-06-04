@@ -1,4 +1,7 @@
-looker.plugins.visualizations.add({
+import * as d3 from 'd3'
+import { formatType, handleErrors } from '../common/utils'
+
+var vis = {
   // Id and Label are legacy properties that no longer have any function besides documenting
   // what the visualization used to have. The properties are now set via the manifest
   // form within the admin/visualizations page of Looker
@@ -22,33 +25,21 @@ looker.plugins.visualizations.add({
     // Insert a <style> tag with some styles we'll use later.
     element.innerHTML = `
       <style>
-        .hello-world-vis {
-          /* Vertical centering */
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          text-align: center;
-        }
-        .hello-world-text-large {
-          font-size: 72px;
-        }
-        .hello-world-text-small {
-          font-size: 18px;
-        }
+
       </style>
     `;
 
-    // Create a container element to let us center the text.
-    var container = element.appendChild(document.createElement("div"));
-    container.className = "hello-world-vis";
-
-    // Create an element to contain the text.
-    this._textElement = container.appendChild(document.createElement("div"));
-
+    var container = element.appendChild(document.createElement("svg"));
+    container.className = "nested-column-vis";
   },
   // Render in response to the data or settings changing
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    if (!handleErrors(this, queryResponse, {
+      min_pivots: 1, max_pivots: 1,
+      min_dimensions: 1, max_dimensions: 1,
+      min_measures: 1, max_measures: undefined
+    })) return;
+
     console.log("data: ", data);
     console.log("element:" , element);
     console.log("config: ", config);
@@ -56,30 +47,56 @@ looker.plugins.visualizations.add({
     console.log("details: ", details);
     console.log("done: ", done);
 
-    // Clear any errors from previous updates
-    this.clearErrors();
+    // TODO: Remove?
+    // this.clearErrors();
 
-    // Throw some errors and exit if the shape of the data isn't what this chart needs
-    if (queryResponse.fields.dimensions.length == 0) {
-      this.addError({title: "No Dimensions", message: "This chart requires dimensions."});
-      return;
-    }
+    const margin = {
+      top: 20,
+      right: 20,
+      bottom: 60,
+      left: 40
+    };
+    const width = element.clientWidth - margin.left - margin.right;
+    const height = element.clientHeight - margin.top - margin.bottom;
+
+    const dimension = queryResponse.fields.dimensions[0];
+    const pivot = queryResponse.fields.pivots[0];
+    const measures = queryResponse.fields.measures;
+
+    var dimension_groups = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1)
+      .domain(data.map(function(d, i) { return d[dimension.name]; } ));
+    var measure_groups = d3.scale.ordinal();
+    
+    var dimension_axis = d3.svg.axis()
+      .scale(dimension_groups)
+      .orient("bottom");
+
+    var y = d3.scale.linear()
+      .range([height, 0]);
+    //.domain(): calculate largest stack of bars
+
+    var y_axis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format(".2s"));
 
     // Grab the first cell of the data
     var firstRow = data[0];
-    var firstCell = firstRow[queryResponse.fields.dimensions[0].name];
+    var firstCell = firstRow[dimension.name];
 
     // Insert the data into the page
     this._textElement.innerHTML = LookerCharts.Utils.htmlForCell(firstCell);
 
     // Set the size to the user-selected size
     if (config.font_size == "small") {
-      this._textElement.className = "hello-world-text-small";
+      this._textElement.className = "nested-column-text-small";
     } else {
-      this._textElement.className = "hello-world-text-large";
+      this._textElement.className = "nested-column-text-large";
     }
 
-    // We are done rendering! Let Looker know.
-    done()
+    done();
   }
-});
+};
+
+looker.plugins.visualizations.add(vis);
