@@ -49,6 +49,12 @@ looker.plugins.visualizations.add({
   },
   // Render in response to the data or settings changing
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    console.log("data: ", data);
+    console.log("element:" , element);
+    console.log("config: ", config);
+    console.log("queryResponse: ", queryResponse);
+    console.log("details: ", details);
+    console.log("done: ", done);
 
     // Clear any errors from previous updates
     this.clearErrors();
@@ -61,7 +67,7 @@ looker.plugins.visualizations.add({
 
     // Grab the first cell of the data
     var firstRow = data[0];
-    var firstCell = firstRow[queryResponse.fields.dimensions[0].name] + "foo";
+    var firstCell = firstRow[queryResponse.fields.dimensions[0].name];
 
     // Insert the data into the page
     this._textElement.innerHTML = LookerCharts.Utils.htmlForCell(firstCell);
