@@ -1,6 +1,3 @@
-import * as d3 from 'd3';
-import { formatType, handleErrors } from '../common/utils';
-
 function getDataStackValue(dataStack) {
   var currentSum = 0;
   Object.keys(dataStack).forEach((function(dataPivot) {
