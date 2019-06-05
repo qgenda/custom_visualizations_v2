@@ -1,5 +1,6 @@
-import * as d3 from 'd3'
-import { formatType, handleErrors } from '../common/utils'
+"use strict";
+import * as d3 from "d3";
+import { formatType, handleErrors } from "../common/utils";
 
 var vis = {
   // Id and Label are legacy properties that no longer have any function besides documenting
@@ -73,7 +74,8 @@ var vis = {
       .orient("bottom");
 
     var y = d3.scale.linear()
-      .range([height, 0]);
+      .range([height, 0])
+      .domain([0, height]);
     //.domain(): calculate largest stack of bars
 
     var y_axis = d3.svg.axis()
