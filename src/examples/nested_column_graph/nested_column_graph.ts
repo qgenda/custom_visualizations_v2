@@ -1,24 +1,36 @@
+declare var looker: Looker;
+
 import * as d3 from 'd3';
 import { formatType, handleErrors } from '../common/utils';
 
-function getDataStackValue(dataStack) {
+import {
+    Row,
+    Looker,
+    VisualizationDefinition
+} from '../types/types'
+
+function getDataStackValue(dataStack: any) {
   var currentSum = 0;
   Object.keys(dataStack).forEach((function(dataPivot) {
-    currentSum += (dataPivot.value || 0);
+    currentSum += (dataStack[dataPivot].value || 0);
   }));
 
   return currentSum;
 }
 
-function getMaxStackValue(data, measures) {
-  return Math.max(...measures.map(function (m) {
-    return Math.max(...data.map(function(d) {
+function getMaxStackValue(data: any, measures: any) {
+  return Math.max(...measures.map(function (m: any) {
+    return Math.max(...data.map(function(d: any) {
       return getDataStackValue(d[m.name]);
     }));
   }));
 }
 
-var vis = {
+interface NestedColumnGraphVisualization extends VisualizationDefinition {
+    svg?: any
+  }
+
+const vis: NestedColumnGraphVisualization = {
   // Id and Label are legacy properties that no longer have any function besides documenting
   // what the visualization used to have. The properties are now set via the manifest
   // form within the admin/visualizations page of Looker
@@ -78,11 +90,11 @@ var vis = {
     const pivot = queryResponse.fields.pivots[0];
     const measures = queryResponse.fields.measures;
 
-    var dimension_x = d3.scaleBand()
+    const dimension_x = d3.scaleBand()
       .rangeRound([0, width])
       .paddingInner(0.1);
 
-    var measure_x = d3.scaleBand()
+      const measure_x = d3.scaleBand()
       .padding(0.05);
 
     /*
@@ -92,20 +104,24 @@ var vis = {
     var measure_groups = d3.scaleOrdinal();
     */
 
-    var dimension_axis = d3.svg.axis()
+    /*
+    const dimension_axis = d3.svg.axis()
         .scale(dimension_x)
         .orient("bottom");
+    */
 
-    var y = d3.scaleLinear()
+    const y = d3.scaleLinear()
         .range([height, 0])
         .domain([0, getMaxStackValue(data, measures)]);
 
-    var y_axis = d3.svg.axis()
+    /*
+    const y_axis = d3.svg.axis()
         .scale(y)
         .orient("left")
         .tickFormat(d3.format(".2s"));
+    */
 
-    var chart = d3.select(".chart")
+    const chart = d3.select(".chart")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
