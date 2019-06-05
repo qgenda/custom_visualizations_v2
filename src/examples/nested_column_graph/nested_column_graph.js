@@ -46,12 +46,14 @@ var vis = {
     
   },
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    /*
     if (!handleErrors(this, queryResponse, {
       min_pivots: 1, max_pivots: 1,
       min_dimensions: 1, max_dimensions: 1,
       min_measures: 1, max_measures: undefined
     })) return;
-
+    */
+    
     console.log("data: ", data);
     console.log("element:" , element);
     console.log("config: ", config);

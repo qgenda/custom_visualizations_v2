@@ -74,6 +74,8 @@ const vis: NestedColumnGraphVisualization = {
     console.log("details: ", details);
     console.log("done: ", done);
 
+    console.log("getMaxStackValue: ", getMaxStackValue(data));
+
     // TODO: Remove?
     // this.clearErrors();
 
