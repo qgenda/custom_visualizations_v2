@@ -56,8 +56,7 @@ const vis: NestedColumnGraphVisualization = {
       </style>
     `;
 
-    var container = element.appendChild(document.createElement("svg"));
-    container.className = "chart";
+    this.svg = d3.select(element).append('svg')
     
   },
   updateAsync: function(data, element, config, queryResponse, details, done) {
@@ -87,18 +86,28 @@ const vis: NestedColumnGraphVisualization = {
     const height = element.clientHeight - margin.top - margin.bottom;
 
     const dimension = queryResponse.fields.dimensions[0];
-    const pivot = queryResponse.fields.pivots[0];
     const measures = queryResponse.fields.measures;
+    const pivot = queryResponse.fields.pivots[0];
+    const pivotValues = queryResponse.pivots;
 
     console.log("getMaxStackValue: ", getMaxStackValue(data, measures));
     console.log("-------------------------");
 
-    const dimension_x = d3.scaleBand()
-      .rangeRound([0, width])
-      .paddingInner(0.1);
+    const svg = this.svg!
+        .html('')
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    const measure_x = d3.scaleBand()
-      .padding(0.05);
+    let dimension_x = d3.scaleBand()
+      .rangeRound([0, width])
+      .paddingInner(0.1)
+      .domain(data.map(function(d) { return d[dimension.name].value; } ));
+
+    let measure_x = d3.scaleBand()
+      .padding(0.05)
+      .domain(measures.map(function(m) { return m.label_short }));
 
     /*
     var dimension_groups = d3.scaleOrdinal()
@@ -113,7 +122,7 @@ const vis: NestedColumnGraphVisualization = {
         .orient("bottom");
     */
 
-    const y = d3.scaleLinear()
+    let y = d3.scaleLinear()
         .range([height, 0])
         .domain([0, getMaxStackValue(data, measures)]);
 
@@ -124,13 +133,28 @@ const vis: NestedColumnGraphVisualization = {
         .tickFormat(d3.format(".2s"));
     */
 
-    const chart = d3.select(".chart")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    let stack = d3.stack()
+        .offset(d3.stackOffsetNone);
 
     
+    let flattenedData: any[] = [];
+    data.map(function(d) {
+        measures.map(function(m) {
+            let dataPoint: any = {
+                [dimension.name]: d[dimension.name].value,
+                [m.name]: m.label_short
+            };
+
+            pivotValues.map(function(p) {
+
+                dataPoint[p["metadata"][pivot.name].value] = d[m.name][p.key].value;
+            });
+
+            flattenedData.push(dataPoint);
+        });
+    });
+
+    console.log("flattenedData: ", flattenedData);
 
     done();
   }
