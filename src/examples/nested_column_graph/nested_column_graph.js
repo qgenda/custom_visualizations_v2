@@ -1,5 +1,22 @@
-//import * as d3 from 'd3';
-//import { formatType, handleErrors } from '../common/utils';
+import * as d3 from 'd3';
+import { formatType, handleErrors } from '../common/utils';
+
+function getDataStackValue(dataStack) {
+  var currentSum = 0;
+  Object.keys(dataStack).forEach((function(dataPivot) {
+    currentSum += (dataPivot.value || 0);
+  }));
+
+  return currentSum;
+}
+
+function getMaxStackValue(data, measures) {
+  return Math.max(...measures.map(function (m) {
+    return Math.max(...data.map(function(d) {
+      return getDataStackValue(d[m.name]);
+    }));
+  }));
+}
 
 var vis = {
   // Id and Label are legacy properties that no longer have any function besides documenting
@@ -28,16 +45,15 @@ var vis = {
     `;
 
     var container = element.appendChild(document.createElement("svg"));
-    container.className = "nested-column-vis";
+    container.className = "chart";
+    
   },
   updateAsync: function(data, element, config, queryResponse, details, done) {
-    /*
     if (!handleErrors(this, queryResponse, {
       min_pivots: 1, max_pivots: 1,
       min_dimensions: 1, max_dimensions: 1,
       min_measures: 1, max_measures: undefined
     })) return;
-    */
 
     console.log("data: ", data);
     console.log("element:" , element);
@@ -62,42 +78,40 @@ var vis = {
     const pivot = queryResponse.fields.pivots[0];
     const measures = queryResponse.fields.measures;
 
+    var dimension_x = d3.scaleBand()
+      .rangeRound([0, width])
+      .paddingInner(0.1);
+
+    var measure_x = d3.scaleBand()
+      .padding(0.05);
+
     /*
-    var dimension_groups = d3.scale.ordinal()
-      .rangeRoundBands([0, width], .1)
-      .domain(data.map(function(d, i) { return d[dimension.name]; } ));
-    var measure_groups = d3.scale.ordinal();
-    
-    var dimension_axis = d3.svg.axis()
-      .scale(dimension_groups)
-      .orient("bottom");
-
-    var y = d3.scale.linear()
-      .range([height, 0])
-      .domain([0, getMaxStackHeight(data)]);
-
-    var y_axis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      .tickFormat(d3.format(".2s"));
+    var dimension_groups = d3.scaleOrdinal()
+        .rangeRoundBands([0, width], .1)
+        .domain(data.map(function(d, i) { return d[dimension.name]; } ));
+    var measure_groups = d3.scaleOrdinal();
     */
 
+    var dimension_axis = d3.svg.axis()
+        .scale(dimension_x)
+        .orient("bottom");
 
+    var y = d3.scaleLinear()
+        .range([height, 0])
+        .domain([0, getMaxStackValue(data, measures)]);
 
-    // Grab the first cell of the data
-    var firstRow = data[0];
-    var firstCell = firstRow[dimension.name];
+    var y_axis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .tickFormat(d3.format(".2s"));
 
-    // Insert the data into the page
-    this._textElement.innerHTML = LookerCharts.Utils.htmlForCell(firstCell);
+    var chart = d3.select(".chart")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     
-
-    if (config.font_size == "small") {
-      this._textElement.className = "nested-column-text-small";
-    } else {
-      this._textElement.className = "nested-column-text-large";
-    }
 
     done();
   }
