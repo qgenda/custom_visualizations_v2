@@ -1,7 +1,7 @@
 declare var looker: Looker;
 
 import * as d3 from 'd3';
-import { formatType, handleErrors } from '../common/utils';
+import { handleErrors } from '../common/utils';
 
 import {
     Row,
@@ -74,8 +74,6 @@ const vis: NestedColumnGraphVisualization = {
     console.log("details: ", details);
     console.log("done: ", done);
 
-    console.log("getMaxStackValue: ", getMaxStackValue(data));
-
     // TODO: Remove?
     // this.clearErrors();
 
@@ -92,11 +90,14 @@ const vis: NestedColumnGraphVisualization = {
     const pivot = queryResponse.fields.pivots[0];
     const measures = queryResponse.fields.measures;
 
+    console.log("getMaxStackValue: ", getMaxStackValue(data, measures));
+    console.log("-------------------------");
+
     const dimension_x = d3.scaleBand()
       .rangeRound([0, width])
       .paddingInner(0.1);
 
-      const measure_x = d3.scaleBand()
+    const measure_x = d3.scaleBand()
       .padding(0.05);
 
     /*
