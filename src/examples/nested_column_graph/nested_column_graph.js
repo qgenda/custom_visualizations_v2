@@ -1,6 +1,5 @@
-"use strict";
-import * as d3 from "d3";
-import { formatType, handleErrors } from "../common/utils";
+//import * as d3 from 'd3';
+//import { formatType, handleErrors } from '../common/utils';
 
 var vis = {
   // Id and Label are legacy properties that no longer have any function besides documenting
@@ -20,10 +19,8 @@ var vis = {
       default: "large"
     }
   },
-  // Set up the initial state of the visualization
+  
   create: function(element, config) {
-
-    // Insert a <style> tag with some styles we'll use later.
     element.innerHTML = `
       <style>
 
@@ -33,13 +30,14 @@ var vis = {
     var container = element.appendChild(document.createElement("svg"));
     container.className = "nested-column-vis";
   },
-  // Render in response to the data or settings changing
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    /*
     if (!handleErrors(this, queryResponse, {
       min_pivots: 1, max_pivots: 1,
       min_dimensions: 1, max_dimensions: 1,
       min_measures: 1, max_measures: undefined
     })) return;
+    */
 
     console.log("data: ", data);
     console.log("element:" , element);
@@ -64,6 +62,7 @@ var vis = {
     const pivot = queryResponse.fields.pivots[0];
     const measures = queryResponse.fields.measures;
 
+    /*
     var dimension_groups = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1)
       .domain(data.map(function(d, i) { return d[dimension.name]; } ));
@@ -75,13 +74,15 @@ var vis = {
 
     var y = d3.scale.linear()
       .range([height, 0])
-      .domain([0, height]);
-    //.domain(): calculate largest stack of bars
+      .domain([0, getMaxStackHeight(data)]);
 
     var y_axis = d3.svg.axis()
       .scale(y)
       .orient("left")
       .tickFormat(d3.format(".2s"));
+    */
+
+
 
     // Grab the first cell of the data
     var firstRow = data[0];
@@ -90,7 +91,8 @@ var vis = {
     // Insert the data into the page
     this._textElement.innerHTML = LookerCharts.Utils.htmlForCell(firstCell);
 
-    // Set the size to the user-selected size
+    
+
     if (config.font_size == "small") {
       this._textElement.className = "nested-column-text-small";
     } else {
