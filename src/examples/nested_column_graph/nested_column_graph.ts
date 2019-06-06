@@ -106,7 +106,9 @@ const vis: NestedColumnGraphVisualization = {
 
     let measure_x = d3.scaleBand()
       .padding(0.05)
-      .domain(measures.map(function(m) { return m.label_short }));
+      .domain(measures.map(function(m) { return m.label_short }))
+      .rangeRound([0, dimension_x.bandwidth()])
+  	  .padding(0.2);
 
     /*
     var dimension_groups = d3.scaleOrdinal()
