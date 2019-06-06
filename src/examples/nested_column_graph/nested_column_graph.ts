@@ -111,6 +111,8 @@ const vis: NestedColumnGraphVisualization = {
     let y = d3.scaleLinear()
       .range([height, 0])
       .domain([0, getMaxStackValue(data, measures)]);
+
+    var y1 = d3.scaleBand()
     
     let colorScale = d3.scaleOrdinal()
       .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
@@ -150,7 +152,6 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("stackData: ", stackData);
 
-
     var serie = g.selectAll(".serie")
       .data(stackData)
       .enter().append("g")
@@ -168,6 +169,19 @@ const vis: NestedColumnGraphVisualization = {
         .attr("width", measureX.bandwidth())
         .on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
 
+
+    g.append("g")
+        .attr("class", "axis")
+        .call(d3.axisLeft(y).ticks(null, "s"))
+      .append("text")
+        .attr("x", 2)
+        .attr("y", y((y as any).ticks().pop()) + 0.5)
+        .attr("dy", "0.32em")
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "start")
+        .text("Population");
+        
       console.log("-------------------------");
       done();
   }
