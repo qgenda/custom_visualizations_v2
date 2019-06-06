@@ -111,23 +111,13 @@ const vis: NestedColumnGraphVisualization = {
     let y = d3.scaleLinear()
       .range([height, 0])
       .domain([0, getMaxStackValue(data, measures)]);
-
-    var y1 = d3.scaleBand()
     
     let colorScale = d3.scaleOrdinal()
       .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
       .domain(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }));
 
-    /*
-    const y_axis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-        .tickFormat(d3.format(".2s"));
-    */
-
     let stack = d3.stack()
         .offset(d3.stackOffsetNone);
-
     
     let flattenedData: any[] = [];
     data.map(function(d) {
@@ -169,6 +159,10 @@ const vis: NestedColumnGraphVisualization = {
         .attr("width", measureX.bandwidth())
         .on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
 
+    g.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(dimensionX));
 
     g.append("g")
         .attr("class", "axis")
@@ -180,7 +174,7 @@ const vis: NestedColumnGraphVisualization = {
         .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("text-anchor", "start")
-        .text("Population");
+        .text(measures[0].label_short);
         
       console.log("-------------------------");
       done();
