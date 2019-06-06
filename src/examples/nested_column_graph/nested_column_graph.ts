@@ -90,42 +90,31 @@ const vis: NestedColumnGraphVisualization = {
     const pivot = queryResponse.fields.pivots[0];
     const pivotValues = queryResponse.pivots;
 
-    console.log("getMaxStackValue: ", getMaxStackValue(data, measures));
-
     const svg = this.svg!
         .html('')
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       
-    const g = this.svg.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
+    const g = svg.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    let dimension_x = d3.scaleBand()
+    let dimensionX = d3.scaleBand()
       .rangeRound([0, width])
       .paddingInner(0.1)
       .domain(data.map(function(d) { return d[dimension.name].value; } ));
 
-    let measure_x = d3.scaleBand()
+    let measureX = d3.scaleBand()
       .padding(0.05)
       .domain(measures.map(function(m) { return m.label_short }))
-      .rangeRound([0, dimension_x.bandwidth()])
-  	  .padding(0.2);
-
-    /*
-    var dimension_groups = d3.scaleOrdinal()
-        .rangeRoundBands([0, width], .1)
-        .domain(data.map(function(d, i) { return d[dimension.name]; } ));
-    var measure_groups = d3.scaleOrdinal();
-    */
-
-    /*
-    const dimension_axis = d3.svg.axis()
-        .scale(dimension_x)
-        .orient("bottom");
-    */
-
+      .rangeRound([0, dimensionX.bandwidth()])
+      .padding(0.2);
+      
     let y = d3.scaleLinear()
-        .range([height, 0])
-        .domain([0, getMaxStackValue(data, measures)]);
+      .range([height, 0])
+      .domain([0, getMaxStackValue(data, measures)]);
+    
+    let colorScale = d3.scaleOrdinal()
+      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+      .domain(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }));
 
     /*
     const y_axis = d3.svg.axis()
@@ -162,25 +151,25 @@ const vis: NestedColumnGraphVisualization = {
     console.log("stackData: ", stackData);
 
 
-  var serie = g.selectAll(".serie")
-    .data(stackData)
-    .enter().append("g")
-      .attr("class", "serie")
-      .attr("fill", "#98abc5");
-  
-  serie.selectAll("rect")
-    .data(function(d: any) { return d; })
-    .enter().append("rect")
-  		.attr("class", "serie-rect")
-  		.attr("transform", function(d: any) { return "translate(" + dimension_x(d.data.dimensionValue) + ",0)"; })
-      .attr("x", function(d: any) { return measure_x(d.data.measureName); })
-      .attr("y", function(d: any) { return y(d[1]); })
-      .attr("height", function(d: any) { return y(d[0]) - y(d[1]); })
-      .attr("width", measure_x.bandwidth())
-  		.on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
+    var serie = g.selectAll(".serie")
+      .data(stackData)
+      .enter().append("g")
+        .attr("class", "serie")
+        .attr("fill", function(d: any) { return colorScale(d.key); });
+    
+    serie.selectAll("rect")
+      .data(function(d: any) { return d; })
+      .enter().append("rect")
+        .attr("class", "serie-rect")
+        .attr("transform", function(d: any) { return "translate(" + dimensionX(d.data.dimensionValue) + ",0)"; })
+        .attr("x", function(d: any) { return measureX(d.data.measureName); })
+        .attr("y", function(d: any) { return y(d[1]); })
+        .attr("height", function(d: any) { return y(d[0]) - y(d[1]); })
+        .attr("width", measureX.bandwidth())
+        .on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
 
-    console.log("-------------------------");
-    done();
+      console.log("-------------------------");
+      done();
   }
 };
 
