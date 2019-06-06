@@ -174,6 +174,7 @@ const vis: NestedColumnGraphVisualization = {
         .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("text-anchor", "start")
+        .attr("transform", "rotate(30 20,40)")
         .text(measures[0].label_short);
         
       console.log("-------------------------");
