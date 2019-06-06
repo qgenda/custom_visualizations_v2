@@ -96,8 +96,8 @@ const vis: NestedColumnGraphVisualization = {
         .html('')
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      
+    const g = this.svg.append("g").attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     let dimension_x = d3.scaleBand()
       .rangeRound([0, width])
@@ -154,36 +154,28 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("flattenedData: ", flattenedData);
 
-
-    /*
-    var groupData = d3.nest()
-    .key(function(d) { return d.Year + d.State; })
-  	.rollup(function(d, i){
-      
-      var d2 = {Year: d[0].Year, State: d[0].State}
-      d.forEach(function(d){
-        d2[d.AgeGroup] = d.Value
-      })
-      console.log("rollup d", d, d2);
-    	return d2;
-    })
-    .entries(data)
-    .map(function(d){ return d.value; });
-    */
-
-    /*
-    let groupData = d3.nest()
-      .key(function(d: any) { return d["dimensionValue"] + d["measureName"]; })
-      .rollup(function(d, i) {
-
-      })
-
-    */
-
     const stackData = stack
   	  .keys(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }))(flattenedData);
 
     console.log("stackData: ", stackData);
+
+
+  var serie = g.selectAll(".serie")
+    .data(stackData)
+    .enter().append("g")
+      .attr("class", "serie")
+      .attr("fill", "#98abc5");
+  
+  serie.selectAll("rect")
+    .data(function(d: any) { return d; })
+    .enter().append("rect")
+  		.attr("class", "serie-rect")
+  		.attr("transform", function(d: any) { return "translate(" + dimension_x(d.data.dimensionValue) + ",0)"; })
+      .attr("x", function(d: any) { return measure_x(d.data.measureName); })
+      .attr("y", function(d: any) { return y(d[1]); })
+      .attr("height", function(d: any) { return y(d[0]) - y(d[1]); })
+      .attr("width", measure_x.bandwidth())
+  		.on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
 
     console.log("-------------------------");
     done();
