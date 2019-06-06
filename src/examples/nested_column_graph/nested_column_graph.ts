@@ -162,6 +162,7 @@ const vis: NestedColumnGraphVisualization = {
     g.append("g")
         .attr("class", "axis")
         .attr("transform", `translate(0, ${height})`)
+        .attr("transform", "rotate(30 10,30)")
         .call(d3.axisBottom(dimensionX));
 
     g.append("g")
@@ -174,7 +175,6 @@ const vis: NestedColumnGraphVisualization = {
         .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("text-anchor", "start")
-        .attr("transform", "rotate(30 20,40)")
         .text(measures[0].label_short);
         
       console.log("-------------------------");
