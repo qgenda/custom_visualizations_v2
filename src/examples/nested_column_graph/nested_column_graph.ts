@@ -166,19 +166,21 @@ const vis: NestedColumnGraphVisualization = {
     
     g.selectAll(".axis")
       .selectAll("g")
-      .selectAll("text")
-        .attr("transform", "rotate(30 10,30)");
+      .selectAll("text");
+        //TODO: Need to rotate measure names, not dimension values
+        //.attr("transform", "rotate(30 10,30)");
 
     g.append("g")
         .attr("class", "axis")
         .call(d3.axisLeft(y).ticks(null, "s"))
       .append("text")
-        .attr("x", 2)
-        .attr("y", y((y as any).ticks().pop()) + 0.5)
+        .attr("x", height/2)
+        .attr("y", -30)
         .attr("dy", "0.32em")
         .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("text-anchor", "start")
+        .attr("transform", "rotate(270)")
         .text(measures[0].label_short);
         
       console.log("-------------------------");
