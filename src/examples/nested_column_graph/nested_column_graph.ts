@@ -28,7 +28,7 @@ function getMaxStackValue(data: any, measures: any) {
 
 interface NestedColumnGraphVisualization extends VisualizationDefinition {
     svg?: any
-  }
+}
 
 const vis: NestedColumnGraphVisualization = {
   // Id and Label are legacy properties that no longer have any function besides documenting
@@ -91,7 +91,6 @@ const vis: NestedColumnGraphVisualization = {
     const pivotValues = queryResponse.pivots;
 
     console.log("getMaxStackValue: ", getMaxStackValue(data, measures));
-    console.log("-------------------------");
 
     const svg = this.svg!
         .html('')
@@ -141,13 +140,12 @@ const vis: NestedColumnGraphVisualization = {
     data.map(function(d) {
         measures.map(function(m) {
             let dataPoint: any = {
-                [dimension.name]: d[dimension.name].value,
-                [m.name]: m.label_short
+                ["dimensionValue"]: d[dimension.name].value.toString(),
+                ["measureName"]: m.label_short
             };
 
             pivotValues.map(function(p) {
-
-                dataPoint[p["metadata"][pivot.name].value] = d[m.name][p.key].value;
+                dataPoint[p["metadata"][pivot.name].value] = d[m.name][p.key].value || 0;
             });
 
             flattenedData.push(dataPoint);
@@ -156,6 +154,38 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("flattenedData: ", flattenedData);
 
+
+    /*
+    var groupData = d3.nest()
+    .key(function(d) { return d.Year + d.State; })
+  	.rollup(function(d, i){
+      
+      var d2 = {Year: d[0].Year, State: d[0].State}
+      d.forEach(function(d){
+        d2[d.AgeGroup] = d.Value
+      })
+      console.log("rollup d", d, d2);
+    	return d2;
+    })
+    .entries(data)
+    .map(function(d){ return d.value; });
+    */
+
+    /*
+    let groupData = d3.nest()
+      .key(function(d: any) { return d["dimensionValue"] + d["measureName"]; })
+      .rollup(function(d, i) {
+
+      })
+
+    */
+
+    const stackData = stack
+  	  .keys(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }))(flattenedData);
+
+    console.log("stackData: ", stackData);
+
+    console.log("-------------------------");
     done();
   }
 };
