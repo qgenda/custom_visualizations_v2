@@ -195,16 +195,15 @@ const vis: NestedColumnGraphVisualization = {
     g.selectAll(".x-axis")
       .selectAll("g")
       .selectAll("text")
-        .attr("transform", "translate(0, 30)");
+        .attr("transform", "translate(0, 20)");
     
-    measures.forEach(function(m: any) {
+    measures.forEach(function(m: any, i: number) {
       g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
           .attr("x", (measureX(m.label_short) || 0))
-          .attr("y", 25)
+          .attr("y", 15)
           .attr("fill", "#000")
-          .attr("text-anchor", "middle")
           .attr("font-size", 8)
           .text(m.label_short);
     });
