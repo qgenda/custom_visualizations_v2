@@ -209,6 +209,14 @@ const vis: NestedColumnGraphVisualization = {
           .text(m.label_short);
     });
 
+    g.selectAll(".x-axis")
+      .append("text")
+        .attr("transform", "translate(0, 35)")
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .text(config.x_axis_label);
+
     g.append("g")
         .attr("class", "y-axis")
         .call(d3.axisLeft(y).ticks(null, "s"))
