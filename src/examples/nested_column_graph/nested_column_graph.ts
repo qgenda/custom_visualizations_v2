@@ -198,7 +198,7 @@ const vis: NestedColumnGraphVisualization = {
         .attr("transform", "translate(0, 30)");
     
     measures.forEach(function(m: any) {
-      g.selectAll("x.axis")
+      g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
           .attr("x", measureX(m.name))
