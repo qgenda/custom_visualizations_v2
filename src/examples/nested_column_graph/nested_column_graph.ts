@@ -67,7 +67,7 @@ const vis: NestedColumnGraphVisualization = {
     if (!handleErrors(this, queryResponse, {
       min_pivots: 1, max_pivots: 1,
       min_dimensions: 1, max_dimensions: 1,
-      min_measures: 1, max_measures: undefined
+      min_measures: 2, max_measures: 2 // TODO: This could be any number, just need to fix measure label positions on axis
     })) return;
 
     console.log("data: ", data);
@@ -203,9 +203,8 @@ const vis: NestedColumnGraphVisualization = {
       g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
-          .attr("x", 0)
-          .attr("dx", `${(measureX.bandwidth() * i) + (measureX.bandwidth() / 2)}`)
-          .attr("transform", "translate(0, 15)")
+          .attr("transform", `translate(${measureX(m.label_short) || 0}, 15)`)
+          .attr("text-anchor", "end")
           .attr("fill", "#000")
           .attr("font-size", 8)
           .text(m.label_short);
