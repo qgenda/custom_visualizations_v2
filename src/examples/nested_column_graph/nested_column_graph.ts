@@ -201,8 +201,9 @@ const vis: NestedColumnGraphVisualization = {
       g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
-          .attr("x", (measureX(m.name) || 0) + measureX.bandwidth())
+          .attr("x", (measureX(m.label_short) || 0))
           .attr("y", 25)
+          .attr("fill", "#000")
           .attr("text-anchor", "middle")
           .attr("font-size", 8)
           .text(m.label_short);
