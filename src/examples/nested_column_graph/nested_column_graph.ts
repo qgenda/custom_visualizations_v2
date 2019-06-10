@@ -1,13 +1,15 @@
-declare var looker: Looker;
-
 import * as d3 from 'd3';
 import { handleErrors } from '../common/utils';
 
 import {
-    Row,
-    Looker,
-    VisualizationDefinition
+  Row,
+  Looker,
+  LookerChartUtils,
+  VisualizationDefinition
 } from '../types/types'
+
+declare var looker: Looker;
+declare var LookerCharts: LookerChartUtils
 
 function getDataStackValue(dataStack: any) {
   var currentSum = 0;
@@ -160,15 +162,11 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("stackData: ", stackData);
 
-    //TODO: Map to palette[index] based on pivotValueOrder
     var serie = g.selectAll(".serie")
       .data(stackData)
       .enter().append("g")
         .attr("class", "serie")
-        .attr("fill", function(d: any) { 
-          console.log("d.key: ", d.key);
-          return palette[pivotValueOrder[d.key]];
-        });//colorScale(d.key);
+        .attr("fill", function(d: any) { return palette[pivotValueOrder[d.key] % palette.length]; });
     
     serie.selectAll("rect")
       .data(function(d: any) { return d; })
@@ -179,7 +177,14 @@ const vis: NestedColumnGraphVisualization = {
         .attr("y", function(d: any) { return y(d[1]); })
         .attr("height", function(d: any) { return y(d[0]) - y(d[1]); })
         .attr("width", measureX.bandwidth())
-        .on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
+        .attr("cursor", "pointer")
+        .on('click', function (this: any, d: any) {
+          const event: object = { pageX: d3.event.pageX, pageY: d3.event.pageY }
+          LookerCharts.Utils.openDrillMenu({
+            links: d.data.links,
+            event: event
+          })
+        });
 
     g.append("g")
         .attr("class", "x-axis")
@@ -189,7 +194,7 @@ const vis: NestedColumnGraphVisualization = {
     g.selectAll(".x-axis")
       .selectAll("g")
       .selectAll("text")
-        .attr("transform", "translate(0, 30");
+        .attr("transform", "translate(0, 30)");
     
     
 
@@ -198,7 +203,7 @@ const vis: NestedColumnGraphVisualization = {
         .call(d3.axisLeft(y).ticks(null, "s"))
       .append("text")
         .attr("x", -(height/3))
-        .attr("y", -30)
+        .attr("y", -35)
         .attr("dy", "0.32em")
         .attr("fill", "#000")
         .attr("font-weight", "bold")
