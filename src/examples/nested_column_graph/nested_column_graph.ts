@@ -39,16 +39,18 @@ const vis: NestedColumnGraphVisualization = {
   id: "nested_column_graph",
   label: "Nested Column Graph",
   options: {
-    font_size: {
+    x_axis_label:{
       type: "string",
-      label: "Font Size",
-      values: [
-        {"Large": "large"},
-        {"Small": "small"}
-      ],
-      display: "radio",
-      default: "large"
-    }
+      label: "X Axis Label",
+      display: "text",
+      default: ""
+    },
+    y_axis_label:{
+      type: "string",
+      label: "Y Axis Label",
+      display: "text",
+      default: ""
+    },
   },
   
   create: function(element, config) {
@@ -218,7 +220,7 @@ const vis: NestedColumnGraphVisualization = {
         .attr("font-weight", "bold")
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-90)")
-        .text(measures[0].label_short);
+        .text(config.y_axis_label);
         
       console.log("-------------------------");
       done();
