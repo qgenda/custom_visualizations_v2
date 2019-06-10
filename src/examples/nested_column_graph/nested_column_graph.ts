@@ -144,7 +144,8 @@ const vis: NestedColumnGraphVisualization = {
         measures.map(function(m) {
             let dataPoint: any = {
                 ["dimensionValue"]: d[dimension.name].value.toString(),
-                ["measureName"]: m.label_short
+                ["measureName"]: m.label_short,
+                ["links"]: d[dimension.name].links
             };
 
             pivotValues.map(function(p) {
