@@ -203,7 +203,7 @@ const vis: NestedColumnGraphVisualization = {
         .append("text")
           .attr("transform", `translate(${measureX.bandwidth() * i}, 15)`)
           .attr("fill", "#000")
-          .attr("text-anchor", "end")
+          .attr("text-anchor", "middle")
           .attr("font-size", 8)
           .text(m.label_short);
     });
