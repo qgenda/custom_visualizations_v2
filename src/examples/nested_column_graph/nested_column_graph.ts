@@ -201,6 +201,9 @@ const vis: NestedColumnGraphVisualization = {
       g.selectAll("x.axis")
         .selectAll("g")
         .append("text")
+          .attr("x", measureX(m.name))
+          .attr("y", 5)
+          .attr("text-anchor", "middle")
           .text(m.label_short);
     });
 
