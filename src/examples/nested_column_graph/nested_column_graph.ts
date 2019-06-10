@@ -201,7 +201,7 @@ const vis: NestedColumnGraphVisualization = {
       g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
-          .attr("transform", `translate(${measureX.bandwidth() * i}, 15)`)
+          .attr("transform", `translate(${(measureX.bandwidth() * (i + 1)) / measures.length}, 15)`)
           .attr("fill", "#000")
           .attr("text-anchor", "middle")
           .attr("font-size", 8)
