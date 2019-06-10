@@ -73,9 +73,6 @@ const vis: NestedColumnGraphVisualization = {
     console.log("details: ", details);
     console.log("done: ", done);
 
-    // TODO: Remove?
-    // this.clearErrors();
-
     const margin = {
       top: 20,
       right: 20,
@@ -89,6 +86,27 @@ const vis: NestedColumnGraphVisualization = {
     const measures = queryResponse.fields.measures;
     const pivot = queryResponse.fields.pivots[0];
     const pivotValues = queryResponse.pivots;
+    const pivotValueOrder: any = {};
+    pivotValues.map(function(p) {
+      pivotValueOrder[p["metadata"][pivot.name].name] = p["metadata"][pivot.name].sortOrder
+    });
+
+    console.log("pivotValueOrder: ", pivotValueOrder);
+    
+    const palette = [
+      "#4276be",
+      "#3fb0d5",
+      "#e57947",
+      "#ffd95f",
+      "#b42f37",
+      "#6a013a",
+      "#7363a9",
+      "#44759a",
+      "#fbb556",
+      "#d5c679",
+      "#9ed7d7",
+      "#d59e79"
+    ];
 
     const svg = this.svg!
         .html('')
@@ -113,7 +131,7 @@ const vis: NestedColumnGraphVisualization = {
       .domain([0, getMaxStackValue(data, measures)]);
     
     let colorScale = d3.scaleOrdinal()
-      .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+      .range(palette)
       .domain(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }));
 
     let stack = d3.stack()
@@ -142,11 +160,12 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("stackData: ", stackData);
 
+    //TODO: Map to palette[index] based on pivotValueOrder
     var serie = g.selectAll(".serie")
       .data(stackData)
       .enter().append("g")
         .attr("class", "serie")
-        .attr("fill", function(d: any) { return colorScale(d.key); });
+        .attr("fill", function(d: any) { return palette[pivotValueOrder[d.key]]; });//colorScale(d.key);
     
     serie.selectAll("rect")
       .data(function(d: any) { return d; })
@@ -160,27 +179,28 @@ const vis: NestedColumnGraphVisualization = {
         .on("click", function(d: any, i: any){ console.log("serie-rect click d", i, d); });
 
     g.append("g")
-        .attr("class", "axis")
+        .attr("class", "x-axis")
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(dimensionX));
     
-    g.selectAll(".axis")
+    g.selectAll(".x-axis")
       .selectAll("g")
-      .selectAll("text");
-        //TODO: Need to rotate measure names, not dimension values
-        //.attr("transform", "rotate(30 10,30)");
+      .selectAll("text")
+        .attr("transform", "translate(0, 30");
+    
+    
 
     g.append("g")
-        .attr("class", "axis")
+        .attr("class", "y-axis")
         .call(d3.axisLeft(y).ticks(null, "s"))
       .append("text")
-        .attr("x", height/2)
+        .attr("x", -(height/3))
         .attr("y", -30)
         .attr("dy", "0.32em")
         .attr("fill", "#000")
         .attr("font-weight", "bold")
-        .attr("text-anchor", "start")
-        .attr("transform", "rotate(270)")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
         .text(measures[0].label_short);
         
       console.log("-------------------------");
