@@ -180,8 +180,6 @@ const vis: NestedColumnGraphVisualization = {
         .attr("width", measureX.bandwidth())
         .attr("cursor", "pointer")
         .on('click', function (this: any, d: any) {
-          console.log("this: ", this);
-          console.log("d: ", d);
           const event: object = { pageX: d3.event.pageX, pageY: d3.event.pageY }
           LookerCharts.Utils.openDrillMenu({
             links: d.data.links,
@@ -199,7 +197,12 @@ const vis: NestedColumnGraphVisualization = {
       .selectAll("text")
         .attr("transform", "translate(0, 30)");
     
-    
+    measures.forEach(function(m: any) {
+      g.selectAll("x.axis")
+        .selectAll("g")
+        .append("text")
+          .text(m.label_short);
+    });
 
     g.append("g")
         .attr("class", "y-axis")
