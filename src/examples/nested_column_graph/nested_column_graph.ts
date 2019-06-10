@@ -88,7 +88,7 @@ const vis: NestedColumnGraphVisualization = {
     const pivotValues = queryResponse.pivots;
     const pivotValueOrder: any = {};
     pivotValues.map(function(p) {
-      pivotValueOrder[p["metadata"][pivot.name].name] = p["metadata"][pivot.name].sortOrder
+      pivotValueOrder[p["metadata"][pivot.name].value] = p["metadata"][pivot.name].sort_value
     });
 
     console.log("pivotValueOrder: ", pivotValueOrder);
@@ -165,7 +165,10 @@ const vis: NestedColumnGraphVisualization = {
       .data(stackData)
       .enter().append("g")
         .attr("class", "serie")
-        .attr("fill", function(d: any) { return palette[pivotValueOrder[d.key]]; });//colorScale(d.key);
+        .attr("fill", function(d: any) { 
+          console.log("d.key: ", d.key);
+          return palette[pivotValueOrder[d.key]];
+        });//colorScale(d.key);
     
     serie.selectAll("rect")
       .data(function(d: any) { return d; })
