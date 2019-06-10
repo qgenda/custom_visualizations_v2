@@ -203,14 +203,12 @@ const vis: NestedColumnGraphVisualization = {
       g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
-          .attr("x", (measureX(m.label_short) || 0))
-          .attr("y", 15)
+        .attr("transform", `translate(${measureX.bandwidth() * (i / measures.length)}, 15)`)
           .attr("fill", "#000")
           .attr("font-size", 8)
           .text(m.label_short);
     });
 
-    /*
     g.selectAll(".x-axis")
       .append("text")
         .attr("transform", `translate(${width / 2}, 55)`)
@@ -219,7 +217,6 @@ const vis: NestedColumnGraphVisualization = {
         .attr("text-anchor", "middle")
         .attr("font-size", 12)
         .text(config.x_axis_label);
-    */
 
     g.append("g")
         .attr("class", "y-axis")
