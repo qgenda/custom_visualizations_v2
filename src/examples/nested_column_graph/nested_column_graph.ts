@@ -203,8 +203,8 @@ const vis: NestedColumnGraphVisualization = {
       g.selectAll(".x-axis")
         .selectAll("g")
         .append("text")
-          .attr("transform", `translate(${measureX(m.label_short) || 0}, 15)`)
-          .attr("text-anchor", "end")
+          .attr("x", (measureX(m.label_short) || 0))
+          .attr("y", 15)
           .attr("fill", "#000")
           .attr("font-size", 8)
           .text(m.label_short);
