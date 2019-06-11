@@ -216,6 +216,8 @@ const vis: NestedColumnGraphVisualization = {
           })
         })
         .on('mousemove', function (this: any, d: any) {
+          console.log("this: ", this);
+          console.log("d: ", d);
           let tooltip = document.getElementById("tooltip")!;
           tooltip.innerHTML = getTooltipHtml(d, dimension.label_short);
           tooltip.style.display = "block";
@@ -259,10 +261,10 @@ const vis: NestedColumnGraphVisualization = {
     pivotValues.forEach(function(p: any, i: number) {
       svg.append("rect")
           .attr("x", i * 50)
-          .attr("y", height - 10)
+          .attr("y", element.clientHeight - 10)
           .attr("height", 10)
           .attr("width", 10)
-          .attr("fill", palette[pivotValueOrder[p["metadata"][pivot.name].sort_value] % palette.length]);
+          .attr("fill", palette[p["metadata"][pivot.name].sort_value % palette.length]);
     });
 
     g.append("g")
