@@ -2,17 +2,16 @@ import * as d3 from 'd3';
 import { handleErrors } from '../common/utils';
 
 import {
-  Row,
   Looker,
   LookerChartUtils,
   VisualizationDefinition
 } from '../types/types'
 
-declare var looker: Looker;
-declare var LookerCharts: LookerChartUtils
+declare const looker: Looker;
+declare const LookerCharts: LookerChartUtils
 
 function getDataStackValue(dataStack: any) {
-  var currentSum = 0;
+  let currentSum = 0;
   Object.keys(dataStack).forEach((function(dataPivot) {
     currentSum += (dataStack[dataPivot].value || 0);
   }));
@@ -51,6 +50,9 @@ const vis: NestedColumnGraphVisualization = {
       display: "text",
       default: ""
     },
+
+    // TODO: Parse dimension as time y/n
+    // TODO: Time format
   },
   
   create: function(element, config) {
@@ -97,6 +99,7 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("pivotValueOrder: ", pivotValueOrder);
     
+    // "Boardshorts"
     const palette = [
       "#4276be",
       "#3fb0d5",
@@ -133,10 +136,6 @@ const vis: NestedColumnGraphVisualization = {
     let y = d3.scaleLinear()
       .range([height, 0])
       .domain([0, getMaxStackValue(data, measures)]);
-    
-    let colorScale = d3.scaleOrdinal()
-      .range(palette)
-      .domain(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }));
 
     let stack = d3.stack()
         .offset(d3.stackOffsetNone);
@@ -165,7 +164,7 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("stackData: ", stackData);
 
-    var serie = g.selectAll(".serie")
+    let serie = g.selectAll(".serie")
       .data(stackData)
       .enter().append("g")
         .attr("class", "serie")
@@ -187,7 +186,13 @@ const vis: NestedColumnGraphVisualization = {
             links: d.data.links,
             event: event
           })
+        })
+        .on('mouseenter', function (this: any, d: any) {
+          console.log("this: ", this);
+          console.log("d: ", d);
         });
+
+    // TODO: Hover text
 
     g.append("g")
         .attr("class", "x-axis")
@@ -217,6 +222,8 @@ const vis: NestedColumnGraphVisualization = {
         .attr("text-anchor", "middle")
         .attr("font-size", 12)
         .text(config.x_axis_label);
+
+    // TODO: Legend
 
     g.append("g")
         .attr("class", "y-axis")
