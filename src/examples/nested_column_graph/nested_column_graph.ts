@@ -277,7 +277,7 @@ const vis: NestedColumnGraphVisualization = {
 
     g.append("g")
         .attr("class", "y-axis")
-        .call(d3.axisLeft(y).ticks(null, "s"))
+        .call(d3.axisLeft(y).ticks(5, "s"))
       .append("text")
         .attr("x", -(height/3))
         .attr("y", -35)
