@@ -67,6 +67,7 @@ function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
 
   const targetValue = d["0"];
   let accumulatedValue = 0;
+  let matchingLabel = "";
   orderedPivotValues.forEach(function(p: any, i: any) {
     const pivotLabel = p["metadata"][pivot.name].value;
     const dataValue = d.data[pivotLabel];
@@ -75,15 +76,19 @@ function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
     console.log("pivotLabel: ", pivotLabel);
     console.log("dataValue: ", dataValue)
 
-    if (dataValue !== 0) {
-      if (accumulatedValue === targetValue) {
-        console.log("found!");
-        return pivotLabel;
-      }
-
-      accumulatedValue += dataValue;
+    if (dataValue === 0) {
+      return;
     }
+
+    if (accumulatedValue === targetValue) {
+      console.log("found!");
+      matchingLabel = pivotLabel;
+    }
+
+    accumulatedValue += dataValue;
   });
+
+  return matchingLabel;
 }
 
 interface NestedColumnGraphVisualization extends VisualizationDefinition {
