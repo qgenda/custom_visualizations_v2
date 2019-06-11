@@ -27,7 +27,7 @@ function getMaxStackValue(data: any, measures: any) {
   }));
 }
 
-function getTooltipHtml(d: any, dimensionName: any) {
+function getTooltipHtml(d: any, dimensionName: any, pivotValue: any) {
   return `
     <div>
       <div>
@@ -37,6 +37,9 @@ function getTooltipHtml(d: any, dimensionName: any) {
         <span><b>${d.data.dimensionValue}</b></span>
       </div>
       <div>
+        <span>${pivotValue}</span>
+      </div>
+      <div>
         <span>${d.data.measureName}</span>
       </div>
       <div>
@@ -44,6 +47,36 @@ function getTooltipHtml(d: any, dimensionName: any) {
       </div>
     </div>
   `.trim();
+}
+
+function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
+  const orderedPivotValues = pivotValues.sort(function(p1: any, p2: any) {
+    const p1Sort = p1["metadata"][pivot.name].sort_value;
+    const p2Sort = p2["metadata"][pivot.name].sort_value;
+
+    if (p1Sort > p2Sort) {
+      return 1;
+    }
+    if (p1Sort < p2Sort) {
+      return -1
+    }
+    return 0;
+  });
+
+  const targetValue = d["0"];
+  let accumulatedValue = 0;
+  orderedPivotValues.forEach(function(p: any, i: any) {
+    const pivotLabel = p["metadata"][pivot.name].value;
+    const dataValue = d.data[pivotLabel];
+
+    if (dataValue !== 0) {
+      if (accumulatedValue === targetValue) {
+        return pivotLabel;
+      }
+
+      accumulatedValue += dataValue;
+    }
+  });
 }
 
 interface NestedColumnGraphVisualization extends VisualizationDefinition {
@@ -219,7 +252,7 @@ const vis: NestedColumnGraphVisualization = {
           console.log("this: ", this);
           console.log("d: ", d);
           let tooltip = document.getElementById("tooltip")!;
-          tooltip.innerHTML = getTooltipHtml(d, dimension.label_short);
+          tooltip.innerHTML = getTooltipHtml(d, dimension.label_short, getRectPivotValue(d, pivot, pivotValues));
           tooltip.style.display = "block";
           tooltip.style.left = d3.event.pageX + 10 + "px";
           tooltip.style.top = d3.event.pageY - 25 + "px";
