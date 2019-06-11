@@ -21,7 +21,8 @@
     "no-inferred-empty-object-type": true,
     "space-before-function-paren": false,
     "strict-type-predicates": true,
-    "return-undefined": true
+    "return-undefined": true,
+    "no-unnecessary-semicolors": false
   },
   "rulesDirectory": []
 }
