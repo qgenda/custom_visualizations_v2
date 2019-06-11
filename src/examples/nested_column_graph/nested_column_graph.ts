@@ -27,6 +27,25 @@ function getMaxStackValue(data: any, measures: any) {
   }));
 }
 
+function getTooltipHtml(rect: any, d: any) {
+  return `
+    <div>
+      <div>
+        <span>Dimension Name</span>
+      </div>
+      <div>
+        <span><b>Dimension Value</b></span>
+      </div>
+      <div>
+        <span>Measure Name</span>
+      </div>
+      <div>
+        <span><b>Measure Value</b></span>
+      </div>
+    </div>
+  `.trim();
+}
+
 interface NestedColumnGraphVisualization extends VisualizationDefinition {
     svg?: any
 }
@@ -58,8 +77,16 @@ const vis: NestedColumnGraphVisualization = {
   create: function(element, config) {
     element.innerHTML = `
       <style>
-
+        #tooltip {
+          background: black;
+          color: white;
+          border: 1px solid black;
+          border-radius: 5px;
+          padding: 5px;
+          opacity: .65;
+        }
       </style>
+      <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
     `;
 
     this.svg = d3.select(element).append('svg')
@@ -187,9 +214,18 @@ const vis: NestedColumnGraphVisualization = {
             event: event
           })
         })
-        .on('mouseenter', function (this: any, d: any) {
+        .on('mousemove', function (this: any, d: any) {
           console.log("this: ", this);
           console.log("d: ", d);
+          let tooltip = document.getElementById("tooltip")!;
+          tooltip.innerHTML = getTooltipHtml(this, d);
+          tooltip.style.display = "block";
+          tooltip.style.left = d3.event.pageX + 10 + "px";
+          tooltip.style.top = d3.event.pageY + 10 + "px";
+        })
+        .on('mouseout', function (this: any) {
+          let tooltip = document.getElementById("tooltip")!;
+          tooltip.style.display = "none";
         });
 
     // TODO: Hover text
