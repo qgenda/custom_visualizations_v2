@@ -215,8 +215,6 @@ const vis: NestedColumnGraphVisualization = {
           })
         })
         .on('mousemove', function (this: any, d: any) {
-          console.log("this: ", this);
-          console.log("d: ", d);
           let tooltip = document.getElementById("tooltip")!;
           tooltip.innerHTML = getTooltipHtml(d, dimension.label_short);
           tooltip.style.display = "block";
@@ -227,8 +225,6 @@ const vis: NestedColumnGraphVisualization = {
           let tooltip = document.getElementById("tooltip")!;
           tooltip.style.display = "none";
         });
-
-    // TODO: Hover text
 
     g.append("g")
         .attr("class", "x-axis")
@@ -259,7 +255,14 @@ const vis: NestedColumnGraphVisualization = {
         .attr("font-size", 12)
         .text(config.x_axis_label);
 
-    // TODO: Legend
+    pivotValues.forEach(function(p: any, i: number) {
+      g.append("rect")
+          .attr("x", i * 50)
+          .attr("y", height - 10)
+          .attr("height", 10)
+          .attr("width", 10)
+          .attr("fill", palette[pivotValueOrder[p["metadata"][pivot.name].sort_value] % palette.length]);
+    });
 
     g.append("g")
         .attr("class", "y-axis")
