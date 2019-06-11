@@ -27,20 +27,20 @@ function getMaxStackValue(data: any, measures: any) {
   }));
 }
 
-function getTooltipHtml(rect: any, d: any) {
+function getTooltipHtml(d: any, dimensionName: any) {
   return `
     <div>
       <div>
-        <span>Dimension Name</span>
+        <span>${dimensionName}</span>
+      </div>
+      <div style="margin-bottom: 10px;">
+        <span><b>${d.data.dimensionValue}</b></span>
       </div>
       <div>
-        <span><b>Dimension Value</b></span>
+        <span>${d.data.measureName}</span>
       </div>
       <div>
-        <span>Measure Name</span>
-      </div>
-      <div>
-        <span><b>Measure Value</b></span>
+        <span><b>${d["1"] - d["0"]}</b></span>
       </div>
     </div>
   `.trim();
@@ -83,7 +83,7 @@ const vis: NestedColumnGraphVisualization = {
           border: 1px solid black;
           border-radius: 5px;
           padding: 5px;
-          opacity: .65;
+          opacity: .75;
         }
       </style>
       <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
@@ -218,10 +218,10 @@ const vis: NestedColumnGraphVisualization = {
           console.log("this: ", this);
           console.log("d: ", d);
           let tooltip = document.getElementById("tooltip")!;
-          tooltip.innerHTML = getTooltipHtml(this, d);
+          tooltip.innerHTML = getTooltipHtml(d, dimension.label_short);
           tooltip.style.display = "block";
           tooltip.style.left = d3.event.pageX + 10 + "px";
-          tooltip.style.top = d3.event.pageY + 10 + "px";
+          tooltip.style.top = d3.event.pageY - 25 + "px";
         })
         .on('mouseout', function (this: any) {
           let tooltip = document.getElementById("tooltip")!;
