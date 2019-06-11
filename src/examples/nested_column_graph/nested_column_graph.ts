@@ -262,7 +262,7 @@ const vis: NestedColumnGraphVisualization = {
           let isMouseOnLeftSide = d3.event.pageX < (element.clientWidth / 2);
           tooltip.innerHTML = getTooltipHtml(d, dimension.label_short, getRectPivotValue(d, pivot, pivotValues));
           tooltip.style.display = "block";
-          tooltip.style.left = isMouseOnLeftSide ? (d3.event.pageX + 10) + "px" : (d3.event.pageX - 160) + "px";
+          tooltip.style.left = isMouseOnLeftSide ? (d3.event.pageX + 10) + "px" : (d3.event.pageX - 170) + "px";
           tooltip.style.top = d3.event.pageY - 35 + "px";
         })
         .on('mouseout', function (this: any) {
