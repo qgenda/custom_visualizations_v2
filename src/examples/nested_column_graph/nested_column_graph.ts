@@ -262,7 +262,7 @@ const vis: NestedColumnGraphVisualization = {
       svg.append("circle")
           .attr("cx",margin.left + (i * 50))
           .attr("cy", element.clientHeight - 5)
-          .attr("cr", 5)
+          .attr("r", 5)
           .attr("fill", palette[p["metadata"][pivot.name].sort_value % palette.length]);
 
       svg.append("text")
