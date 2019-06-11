@@ -109,7 +109,7 @@ const vis: NestedColumnGraphVisualization = {
     const margin = {
       top: 20,
       right: 20,
-      bottom: 60,
+      bottom: 70,
       left: 40
     };
     const width = element.clientWidth - margin.left - margin.right;
