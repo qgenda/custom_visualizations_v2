@@ -63,8 +63,6 @@ function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
     return 0;
   });
 
-  console.log("orderedPivotValues: ", orderedPivotValues);
-
   const targetValue = d["0"];
   let accumulatedValue = 0;
   let matchingLabel = "";
@@ -72,16 +70,11 @@ function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
     const pivotLabel = p["metadata"][pivot.name].value;
     const dataValue = d.data[pivotLabel];
 
-    console.log("accumulatedValue: ", accumulatedValue);
-    console.log("pivotLabel: ", pivotLabel);
-    console.log("dataValue: ", dataValue)
-
     if (dataValue === 0) {
       return;
     }
 
     if (accumulatedValue === targetValue) {
-      console.log("found!");
       matchingLabel = pivotLabel;
     }
 
@@ -129,6 +122,8 @@ const vis: NestedColumnGraphVisualization = {
           border-radius: 5px;
           padding: 5px;
           opacity: .75;
+          width: 150px;
+          max-width: 150px;
         }
       </style>
       <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
@@ -264,10 +259,11 @@ const vis: NestedColumnGraphVisualization = {
           console.log("this: ", this);
           console.log("d: ", d);
           let tooltip = document.getElementById("tooltip")!;
+          let isMouseOnLeftSide = d3.event.pageX < (element.clientWidth / 2);
           tooltip.innerHTML = getTooltipHtml(d, dimension.label_short, getRectPivotValue(d, pivot, pivotValues));
           tooltip.style.display = "block";
-          tooltip.style.left = d3.event.pageX + 10 + "px";
-          tooltip.style.top = d3.event.pageY - 25 + "px";
+          tooltip.style.left = isMouseOnLeftSide ? (d3.event.pageX + 10) + "px" : (d3.event.pageX - 160) + "px";
+          tooltip.style.top = d3.event.pageY - 35 + "px";
         })
         .on('mouseout', function (this: any) {
           let tooltip = document.getElementById("tooltip")!;
