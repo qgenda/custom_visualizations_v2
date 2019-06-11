@@ -124,6 +124,7 @@ const vis: NestedColumnGraphVisualization = {
       pivotValueOrder[p["metadata"][pivot.name].value] = p["metadata"][pivot.name].sort_value
     });
 
+    console.log("pivotValues: ", pivotValues);
     console.log("pivotValueOrder: ", pivotValueOrder);
     
     // "Boardshorts"
@@ -234,7 +235,7 @@ const vis: NestedColumnGraphVisualization = {
     g.selectAll(".x-axis")
       .selectAll("g")
       .selectAll("text")
-        .attr("transform", "translate(0, 20)");
+        .attr("transform", "translate(0, 15)");
     
     measures.forEach(function(m: any, i: number) {
       g.selectAll(".x-axis")
@@ -248,7 +249,7 @@ const vis: NestedColumnGraphVisualization = {
 
     g.selectAll(".x-axis")
       .append("text")
-        .attr("transform", `translate(${width / 2}, 55)`)
+        .attr("transform", `translate(${width / 2}, 50)`)
         .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("text-anchor", "middle")
@@ -256,7 +257,7 @@ const vis: NestedColumnGraphVisualization = {
         .text(config.x_axis_label);
 
     pivotValues.forEach(function(p: any, i: number) {
-      g.append("rect")
+      svg.append("rect")
           .attr("x", i * 50)
           .attr("y", height - 10)
           .attr("height", 10)
