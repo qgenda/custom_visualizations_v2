@@ -63,14 +63,21 @@ function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
     return 0;
   });
 
+  console.log("orderedPivotValues: ", orderedPivotValues);
+
   const targetValue = d["0"];
   let accumulatedValue = 0;
   orderedPivotValues.forEach(function(p: any, i: any) {
     const pivotLabel = p["metadata"][pivot.name].value;
     const dataValue = d.data[pivotLabel];
 
+    console.log("accumulatedValue: ", accumulatedValue);
+    console.log("pivotLabel: ", pivotLabel);
+    console.log("dataValue: ", dataValue)
+
     if (dataValue !== 0) {
       if (accumulatedValue === targetValue) {
+        console.log("found!");
         return pivotLabel;
       }
 
