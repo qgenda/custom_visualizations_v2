@@ -108,8 +108,6 @@ const vis: NestedColumnGraphVisualization = {
       default: ""
     },
 
-    // TODO: Parse dimension as time y/n
-    // TODO: Time format
   },
   
   create: function(element, config) {
@@ -232,16 +230,14 @@ const vis: NestedColumnGraphVisualization = {
 
     console.log("stackData: ", stackData);
 
-    let serie = g.selectAll(".serie")
+    let rects = g.selectAll(".rects")
       .data(stackData)
       .enter().append("g")
-        .attr("class", "serie")
         .attr("fill", function(d: any) { return palette[pivotValueOrder[d.key] % palette.length]; });
     
-    serie.selectAll("rect")
+    rects.selectAll("rect")
       .data(function(d: any) { return d; })
       .enter().append("rect")
-        .attr("class", "serie-rect")
         .attr("transform", function(d: any) { return "translate(" + dimensionX(d.data.dimensionValue) + ",0)"; })
         .attr("x", function(d: any) { return measureX(d.data.measureName); })
         .attr("y", function(d: any) { return y(d[1]); })
@@ -256,8 +252,6 @@ const vis: NestedColumnGraphVisualization = {
           })
         })
         .on('mousemove', function (this: any, d: any) {
-          console.log("this: ", this);
-          console.log("d: ", d);
           let tooltip = document.getElementById("tooltip")!;
           let isMouseOnLeftSide = d3.event.pageX < (element.clientWidth / 2);
           tooltip.innerHTML = getTooltipHtml(d, dimension.label_short, getRectPivotValue(d, pivot, pivotValues));
