@@ -98,7 +98,7 @@ interface NestedColumnGraphVisualization extends VisualizationDefinition {
     svg?: any
 }
 
-const vis: NestedColumnGraphVisualization = {
+const nestedColumnGraph: NestedColumnGraphVisualization = {
   // Id and Label are legacy properties that no longer have any function besides documenting
   // what the visualization used to have. The properties are now set via the manifest
   // form within the admin/visualizations page of Looker
@@ -110,18 +110,21 @@ const vis: NestedColumnGraphVisualization = {
       label: "X Axis Label",
       display: "text",
       default: "",
+      order: 1,
     },
     y_axis_label: {
       type: "string",
       label: "Y Axis Label",
       display: "text",
       default: "",
+      order: 2,
     },
     date_format: {
       type: "string",
       label: "Date Format",
       display: "text",
       default: "",
+      order: 3,
     },
   },
   
@@ -152,13 +155,6 @@ const vis: NestedColumnGraphVisualization = {
       min_measures: 2, max_measures: 2 // TODO: This could be any number, just need to fix measure label positions on axis
     })) return;
 
-    console.log("data: ", data);
-    console.log("element:" , element);
-    console.log("config: ", config);
-    console.log("queryResponse: ", queryResponse);
-    console.log("details: ", details);
-    console.log("done: ", done);
-
     const margin = {
       top: 20,
       right: 20,
@@ -176,9 +172,6 @@ const vis: NestedColumnGraphVisualization = {
     pivotValues.map(function(p) {
       pivotValueOrder[p["metadata"][pivot.name].value] = p["metadata"][pivot.name].sort_value
     });
-
-    console.log("pivotValues: ", pivotValues);
-    console.log("pivotValueOrder: ", pivotValueOrder);
     
     // "Boardshorts"
     const palette = [
@@ -244,12 +237,8 @@ const vis: NestedColumnGraphVisualization = {
         });
     });
 
-    console.log("flattenedData: ", flattenedData);
-
     const stackData = stack
   	  .keys(pivotValues.map(function(p) { return p["metadata"][pivot.name].value }))(flattenedData);
-
-    console.log("stackData: ", stackData);
 
     let rects = g.selectAll(".rects")
       .data(stackData)
@@ -285,6 +274,7 @@ const vis: NestedColumnGraphVisualization = {
           tooltip.style.display = "none";
         });
 
+    // X axis
     g.append("g")
         .attr("class", "x-axis")
         .attr("transform", `translate(0, ${height})`)
@@ -294,7 +284,18 @@ const vis: NestedColumnGraphVisualization = {
       .selectAll("g")
       .selectAll("text")
         .attr("transform", "translate(0, 15)");
+
+    // X axis label
+    g.selectAll(".x-axis")
+      .append("text")
+        .attr("transform", `translate(${width / 2}, 50)`)
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .attr("font-size", 12)
+        .text(config.x_axis_label);
     
+    // Measure labels
     measures.forEach(function(m: any, i: number) {
       g.selectAll(".x-axis")
         .selectAll("g")
@@ -305,15 +306,7 @@ const vis: NestedColumnGraphVisualization = {
           .text(m.label_short);
     });
 
-    g.selectAll(".x-axis")
-      .append("text")
-        .attr("transform", `translate(${width / 2}, 50)`)
-        .attr("fill", "#000")
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "middle")
-        .attr("font-size", 12)
-        .text(config.x_axis_label);
-
+    // Legend
     pivotValues.forEach(function(p: any, i: number) {
       svg.append("circle")
           .attr("cx",margin.left + (i * 50))
@@ -329,6 +322,7 @@ const vis: NestedColumnGraphVisualization = {
           .text(p["metadata"][pivot.name].value.substr(0, 3));
     });
 
+    // Y axis
     g.append("g")
         .attr("class", "y-axis")
         .call(d3.axisLeft(y).ticks(5, "s"))
@@ -342,10 +336,9 @@ const vis: NestedColumnGraphVisualization = {
         .attr("font-size", 12)
         .attr("transform", "rotate(-90)")
         .text(config.y_axis_label);
-        
-      console.log("-------------------------");
+
       done();
   }
 };
 
-looker.plugins.visualizations.add(vis);
+looker.plugins.visualizations.add(nestedColumnGraph);
