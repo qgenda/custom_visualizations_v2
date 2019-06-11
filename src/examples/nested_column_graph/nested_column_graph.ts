@@ -40,7 +40,7 @@ function getTooltipHtml(d: any, dimensionName: any) {
         <span>${d.data.measureName}</span>
       </div>
       <div>
-        <span><b>${d["1"] - d["0"]}</b></span>
+        <span><b>${Math.round((d["1"] - d["0"]) * 100) / 100}</b></span>
       </div>
     </div>
   `.trim();
