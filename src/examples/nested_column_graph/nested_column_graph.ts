@@ -266,8 +266,8 @@ const vis: NestedColumnGraphVisualization = {
           .attr("fill", palette[p["metadata"][pivot.name].sort_value % palette.length]);
 
       svg.append("text")
-          .attr("x", margin.left + ((i * 50) + 15))
-          .attr("y", element.clientHeight)
+          .attr("x", margin.left + ((i * 50) + 10))
+          .attr("y", element.clientHeight - 1)
           .attr("fill", "#000")
           .attr("font-size", 12)
           .text(p["metadata"][pivot.name].value.substr(0, 3));
