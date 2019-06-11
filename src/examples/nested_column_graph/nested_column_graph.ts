@@ -259,19 +259,17 @@ const vis: NestedColumnGraphVisualization = {
         .text(config.x_axis_label);
 
     pivotValues.forEach(function(p: any, i: number) {
-      svg.append("rect")
-          .attr("x",margin.left + (i * 40))
-          .attr("y", element.clientHeight - 10)
-          .attr("height", 10)
-          .attr("width", 10)
+      svg.append("circle")
+          .attr("cx",margin.left + (i * 50))
+          .attr("cy", element.clientHeight - 5)
+          .attr("cr", 5)
           .attr("fill", palette[p["metadata"][pivot.name].sort_value % palette.length]);
 
       svg.append("text")
-          .attr("x", margin.left + ((i * 40) + 15))
-          .attr("y", element.clientHeight - 2)
+          .attr("x", margin.left + ((i * 50) + 15))
+          .attr("y", element.clientHeight)
           .attr("fill", "#000")
-          .attr("font-size", 10)
-          .attr("font-weight", "bold")
+          .attr("font-size", 12)
           .text(p["metadata"][pivot.name].value.substr(0, 3));
     });
 
