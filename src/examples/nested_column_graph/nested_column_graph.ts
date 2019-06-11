@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import * as moment from 'moment';
 import { handleErrors } from '../common/utils';
 
 import {
@@ -8,7 +9,7 @@ import {
 } from '../types/types'
 
 declare const looker: Looker;
-declare const LookerCharts: LookerChartUtils
+declare const LookerCharts: LookerChartUtils;
 
 function getDataStackValue(dataStack: any) {
   let currentSum = 0;
@@ -84,6 +85,15 @@ function getRectPivotValue(d: any, pivot: any, pivotValues: any) {
   return matchingLabel;
 }
 
+function formatDateValue(dateStr: any, dateFormat: any) {
+  let datetime = moment(dateStr);
+  if (!datetime.isValid()) {
+    return "Invalid Date";
+  }
+
+  return datetime.format(dateFormat);
+}
+
 interface NestedColumnGraphVisualization extends VisualizationDefinition {
     svg?: any
 }
@@ -95,19 +105,24 @@ const vis: NestedColumnGraphVisualization = {
   id: "nested_column_graph",
   label: "Nested Column Graph",
   options: {
-    x_axis_label:{
+    x_axis_label: {
       type: "string",
       label: "X Axis Label",
       display: "text",
-      default: ""
+      default: "",
     },
-    y_axis_label:{
+    y_axis_label: {
       type: "string",
       label: "Y Axis Label",
       display: "text",
-      default: ""
+      default: "",
     },
-
+    date_format: {
+      type: "string",
+      label: "Date Format",
+      display: "text",
+      default: "",
+    },
   },
   
   create: function(element, config) {
@@ -191,7 +206,11 @@ const vis: NestedColumnGraphVisualization = {
     let dimensionX = d3.scaleBand()
       .rangeRound([0, width])
       .paddingInner(0.1)
-      .domain(data.map(function(d) { return d[dimension.name].value; } ));
+      .domain(data.map(function(d) {
+        return !config.date_format ?
+                 d[dimension.name].value.toString() :
+                 formatDateValue(d[dimension.name].value.toString(), config.date_format);
+      }));
 
     let measureX = d3.scaleBand()
       .padding(0.05)
@@ -210,7 +229,9 @@ const vis: NestedColumnGraphVisualization = {
     data.map(function(d) {
         measures.map(function(m) {
             let dataPoint: any = {
-                ["dimensionValue"]: d[dimension.name].value.toString(),
+                ["dimensionValue"]: !config.date_format ?
+                                      d[dimension.name].value.toString() :
+                                      formatDateValue(d[dimension.name].value.toString(), config.date_format),
                 ["measureName"]: m.label_short,
                 ["links"]: d[dimension.name].links
             };
